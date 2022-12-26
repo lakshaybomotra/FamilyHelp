@@ -10,4 +10,6 @@
     <string name="me_guard">Guard</string>
     <string name="me_profile">Profile</string>
     <string name="myfamily">My Family</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="user">User</string>
 </resources>
