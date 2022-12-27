@@ -22,12 +22,18 @@ class MemberAdapter(private val listMembers: List<MemberModel>) : RecyclerView.A
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = listMembers[position]
         holder.nameUser.text = item.name
+        holder.address.text = item.address
+        holder.battery.text = item.battery
+        holder.distance.text = item.distance
     }
 
     class ViewHolder(private val item:View): RecyclerView.ViewHolder(item) {
 
         val imageUser = item.findViewById<ImageView>(R.id.img_user)
-        val nameUser = item.findViewById<TextView>(R.id.text_user_card)
+        val nameUser = item.findViewById<TextView>(R.id.name)
+        val address = item.findViewById<TextView>(R.id.address)
+        val battery = item.findViewById<TextView>(R.id.battery_percent)
+        val distance = item.findViewById<TextView>(R.id.distance_value)
 
     }
 }

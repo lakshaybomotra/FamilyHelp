@@ -12,4 +12,5 @@
     <string name="myfamily">My Family</string>
     <string name="dashboard">Dashboard</string>
     <string name="user">User</string>
+    <string name="continue_with_google">Continue with Google</string>
 </resources>
