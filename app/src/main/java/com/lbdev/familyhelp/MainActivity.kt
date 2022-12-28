@@ -4,12 +4,16 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,39 +31,38 @@ class MainActivity : AppCompatActivity() {
 
         askForPermission()
 
+
         val bottomBar = findViewById<BottomNavigationView>(R.id.bottom_bar)
         val inviteButton = findViewById<ImageView>(R.id.openInvite)
         inviteButton.setOnClickListener {
-                if (state=="close")
-                {
-                    openInvite(inviteButton)
-                    state = "open"
-                }
-                else {
-                    closeInvite(inviteButton)
-                    state = "close"
-                }
+            if (state == "close") {
+                openInvite(inviteButton)
+                state = "open"
+            } else {
+                closeInvite(inviteButton)
+                state = "close"
+            }
         }
 
         bottomBar.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_guard -> {
                     closeInvite(inviteButton)
-                    inviteButton.isVisible=false
+                    inviteButton.isVisible = false
                     inflateFragment(GuardFragment.newInstance())
                 }
                 R.id.nav_home -> {
-                    inviteButton.isVisible=true
+                    inviteButton.isVisible = true
                     inflateFragment(HomeFragment.newInstance())
                 }
                 R.id.nav_dashboard -> {
                     closeInvite(inviteButton)
-                    inviteButton.isVisible=false
+                    inviteButton.isVisible = false
                     inflateFragment(MapsFragment())
                 }
                 R.id.nav_profile -> {
                     closeInvite(inviteButton)
-                    inviteButton.isVisible=false
+                    inviteButton.isVisible = false
                     inflateFragment(ProfileFragment.newInstance())
                 }
             }
@@ -68,13 +71,32 @@ class MainActivity : AppCompatActivity() {
         }
 
         bottomBar.selectedItemId = R.id.nav_home
+
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val name = currentUser?.displayName.toString()
+        val email = currentUser?.email.toString()
+        val phoneNum = currentUser?.phoneNumber.toString()
+        val imageUrl = currentUser?.photoUrl.toString()
+
+        val db = Firebase.firestore
+
+        val user = hashMapOf(
+            "name" to name,
+            "email" to email,
+            "phoneNumber" to phoneNum,
+            "imageUrl" to imageUrl
+        )
+
+        db.collection("users").document(email).set(user).addOnSuccessListener { }
+            .addOnFailureListener { }
     }
 
     private fun closeInvite(inviteButton: ImageView) {
         inviteButton.setImageResource(R.drawable.ic_up)
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
-        if(fragmentManager.backStackEntryCount >0) {
+        if (fragmentManager.backStackEntryCount > 0) {
             fragmentManager.popBackStack();
         }
         fragmentTransaction.commit();

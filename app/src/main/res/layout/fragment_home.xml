@@ -44,6 +44,41 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:listitem="@layout/item_member" />
 
+    <TextView
+        android:id="@+id/loading_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="visible"
+        android:paddingTop="@dimen/dimen_16"
+        android:textColor="@color/black"
+        android:textAllCaps="true"
+        android:layout_margin="@dimen/dimen_16"
+        android:textSize="@dimen/dimen_24_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Loading Members..." />
+
+    <TextView
+        android:id="@+id/empty_view_home"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:paddingTop="@dimen/dimen_16"
+        android:textColor="@color/black"
+        android:textAllCaps="true"
+        android:layout_margin="@dimen/dimen_16"
+        android:textSize="@dimen/dimen_24_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="No Members added 😞" />
+
+
 <!--    <androidx.coordinatorlayout.widget.CoordinatorLayout-->
 <!--        android:layout_width="match_parent"-->
 <!--        android:layout_height="400dp"-->

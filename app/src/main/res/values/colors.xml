@@ -12,4 +12,6 @@
     <color name="pink_card">#ed7079</color>
     <color name="green_card">#63d2c7</color>
     <color name="light_green">#98fffb</color>
+    <color name="red">#F44336</color>
+    <color name="green">#4CAF50</color>
 </resources>

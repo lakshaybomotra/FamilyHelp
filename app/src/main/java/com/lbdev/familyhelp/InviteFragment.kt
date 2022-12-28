@@ -1,6 +1,7 @@
 package com.lbdev.familyhelp
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.util.Log
@@ -19,11 +20,17 @@ import kotlinx.coroutines.withContext
 class InviteFragment : BottomSheetDialogFragment() {
 
     lateinit var adapter: InviteAdapter
+    lateinit var mContext: Context
     private val listContacts: ArrayList<ContactModel> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mContext = context
     }
 
     override fun onCreateView(
@@ -47,12 +54,12 @@ class InviteFragment : BottomSheetDialogFragment() {
         }
 
         val recycler = requireView().findViewById<RecyclerView>(R.id.invite_members)
-        recycler.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+        recycler.layoutManager = LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL,false)
         recycler.adapter = adapter
     }
 
     private fun fetchDatabaseContacts() {
-        val database = MyFamilyDatabase.getDatabase(requireContext())
+        val database = MyFamilyDatabase.getDatabase(mContext)
         database.contactDao().getAllContacts().observe(viewLifecycleOwner){
 
             listContacts.clear()
@@ -64,11 +71,11 @@ class InviteFragment : BottomSheetDialogFragment() {
     }
 
     private suspend fun insertDatabaseContacts(listContacts: ArrayList<ContactModel>) {
-        if (context!=null)
-        {
-            val database = MyFamilyDatabase.getDatabase(requireContext())
+//        if (context!=null)
+//        {
+            val database = MyFamilyDatabase.getDatabase(mContext)
             database.contactDao().insertAll(listContacts)
-        }
+//        }
     }
 
     @SuppressLint("Range")

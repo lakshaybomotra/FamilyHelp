@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/guardsv"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/grey">
 
     <TextView
@@ -23,10 +27,10 @@
         android:id="@+id/pink_card"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        app:cardElevation="@dimen/dimen_16"
         android:layout_margin="@dimen/dimen_16"
         app:cardBackgroundColor="@color/pink_card"
         app:cardCornerRadius="@dimen/dimen_16"
+        app:cardElevation="@dimen/dimen_16"
         app:layout_constraintTop_toBottomOf="@id/text_head" />
 
     <TextView
@@ -69,10 +73,10 @@
         android:id="@+id/green_card"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        app:cardElevation="@dimen/dimen_16"
         android:layout_margin="@dimen/dimen_16"
         app:cardBackgroundColor="@color/green_card"
         app:cardCornerRadius="@dimen/dimen_16"
+        app:cardElevation="@dimen/dimen_16"
         app:layout_constraintTop_toBottomOf="@+id/pink_card" />
 
     <TextView
@@ -111,4 +115,81 @@
         app:layout_constraintEnd_toEndOf="@id/green_card"
         app:layout_constraintTop_toTopOf="@id/green_card" />
 
+    <LinearLayout
+        android:id="@+id/llSendInvite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_16"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/green_card">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textField"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Enter member email to send invite"
+            android:textColorHint="@color/black"
+            app:boxBackgroundColor="@color/grey">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:id="@+id/inviteEmailId"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btnSendInvite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_rounded_rect"
+            android:text="Invite" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvYourInvite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_16"
+        android:text="Your Invites:"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llSendInvite" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/invite_check_rv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvYourInvite"
+        tools:listitem="@layout/invities_check" />
+
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:paddingTop="@dimen/dimen_16"
+        android:textColor="@color/black"
+        android:textAllCaps="true"
+        android:layout_margin="@dimen/dimen_16"
+        android:textSize="@dimen/dimen_24_sp"
+        app:layout_constraintTop_toBottomOf="@id/tvYourInvite"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="No Invites Received 😞" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

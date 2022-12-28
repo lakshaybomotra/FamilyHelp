@@ -71,6 +71,7 @@ class LoginActivity : AppCompatActivity() {
                 SharedPref.putBoolean(PrefConstants.IS_USER_LOGGED_IN,true)
                 val intent : Intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
+                finish()
             }else{
                 Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
             }
