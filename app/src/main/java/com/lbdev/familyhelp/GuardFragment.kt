@@ -9,20 +9,30 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
 
+    fun View.hideKeyboard() {
+        val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(windowToken, 0)
+    }
+
     lateinit var mContext: Context
+    lateinit var mail: String
+    lateinit var email: EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -40,8 +50,12 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
         val sendInviteButton = requireView().findViewById<Button>(R.id.btnSendInvite)
         val greenCard = requireView().findViewById<CardView>(R.id.green_card)
         val pinkCard = requireView().findViewById<CardView>(R.id.pink_card)
+        email = requireView().findViewById(R.id.inviteEmailId)
         sendInviteButton.setOnClickListener {
-            sendInvite()
+            mail= email.text.toString()
+            sendInvite(mail)
+            it.hideKeyboard()
+            email.isEnabled = false
         }
 
         pinkCard.setOnClickListener {
@@ -93,9 +107,9 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
             }
     }
 
-    private fun sendInvite() {
+    private fun sendInvite(mail: String) {
 
-        val mail = requireView().findViewById<EditText>(R.id.inviteEmailId).text.toString()
+//        val mail = requireView().findViewById<EditText>(R.id.inviteEmailId).text.toString()
 
         val firestore = Firebase.firestore
 
@@ -114,10 +128,13 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
                     .document(senderMail)
                     .collection("members")
                     .document(mail).set(data)
+                email.isEnabled = true
             }
             .addOnFailureListener {
 
             }
+        email.setText("")
+        Toast.makeText(mContext, "Invite Sent", Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreateView(
