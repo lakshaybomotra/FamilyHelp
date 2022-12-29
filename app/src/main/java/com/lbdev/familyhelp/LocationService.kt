@@ -4,9 +4,15 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -47,20 +53,39 @@ class LocationService : Service() {
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setOngoing(true)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        locationClient.getLocationUpdates(10000L).catch { e -> e.printStackTrace() }
+        locationClient
+            .getLocationUpdates(10000L)
+            .catch { e -> e.printStackTrace() }
             .onEach { location ->
                 val lat = location.latitude.toString()
                 val long = location.longitude.toString()
-                val updateNotification = notification.setContentText(
+
+                val currentUser = FirebaseAuth.getInstance().currentUser
+                val email = currentUser?.email.toString()
+
+                val db = Firebase.firestore
+
+                val locationData = mutableMapOf<String, Any>(
+                    "lat" to lat,
+                    "long" to long
+                )
+
+                db.collection("users").document(email).update(locationData).addOnSuccessListener { }
+                    .addOnFailureListener { }
+
+                val updatedNotification = notification.setContentText(
                     "Location: ($lat, $long)"
                 )
-                notificationManager.notify(1, updateNotification.build())
+                notificationManager.notify(1, updatedNotification.build())
             }
             .launchIn(serviceScope)
 
+        Log.d("TAG", "start: before startforegroumd")
         startForeground(1, notification.build())
+//        notificationManager.notify(1, notification.build())
     }
 
     private fun stop() {

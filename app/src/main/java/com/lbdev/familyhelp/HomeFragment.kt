@@ -2,6 +2,7 @@ package com.lbdev.familyhelp
 
 import android.app.ProgressDialog.show
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -45,20 +46,16 @@ class HomeFragment : Fragment() {
 
         getMembers()
 
-//        Log.d("TAG", "onViewCreated: ${listMembers}")
-//        Log.d("getMembers21", "getMembers: recycler view te ageya")
-//        val adapter = MemberAdapter(listMembers)
-//        val recycler = requireView().findViewById<RecyclerView>(R.id.rv_members)
-//        recycler.layoutManager = LinearLayoutManager(mContext)
-//        recycler.adapter = adapter
-//        Log.d("getMembers21", "getMembers: recycler view khatam")
-
-
         val threeDots = requireView().findViewById<ImageView>(R.id.icon_three_dots)
         val icon = requireView().findViewById<ImageView>(R.id.icon_location)
         threeDots.setOnClickListener {
             SharedPref.putBoolean(PrefConstants.IS_USER_LOGGED_IN, false)
             FirebaseAuth.getInstance().signOut()
+
+            Intent(mContext, LocationService::class.java).apply {
+                action = LocationService.ACTION_STOP
+                mContext.startService(this)
+            }
         }
     }
 
@@ -90,14 +87,28 @@ class HomeFragment : Fragment() {
                         firestore.collection("users")
                             .document(it).get().addOnSuccessListener { document ->
                                 if (document != null) {
-                                    listMembers.add(
-                                        MemberModel(
-                                            document.data?.get("name").toString(),
-                                            document.data?.get("email").toString(),
-                                            "58%",
-                                            "552M"
+                                    if (document.data?.get("lat").toString()=="null"){
+                                        listMembers.add(
+                                            MemberModel(
+                                                document.data?.get("name").toString(),
+                                                "User Not Sharing Location",
+                                                "88%",
+                                                "552M"
+                                            )
                                         )
-                                    )
+                                    }
+                                    else
+                                    {
+                                        listMembers.add(
+                                            MemberModel(
+                                                document.data?.get("name").toString(),
+                                                document.data?.get("lat").toString(),
+                                                "58%",
+                                                "552M"
+                                            )
+                                        )
+                                    }
+
                                 } else {
                                     Log.d("TAG", "No such document")
                                 }

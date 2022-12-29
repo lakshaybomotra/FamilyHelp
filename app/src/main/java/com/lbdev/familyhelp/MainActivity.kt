@@ -2,10 +2,10 @@ package com.lbdev.familyhelp
 
 import android.Manifest
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         askForPermission()
-
 
         val bottomBar = findViewById<BottomNavigationView>(R.id.bottom_bar)
         val inviteButton = findViewById<ImageView>(R.id.openInvite)
@@ -85,7 +84,9 @@ class MainActivity : AppCompatActivity() {
             "name" to name,
             "email" to email,
             "phoneNumber" to phoneNum,
-            "imageUrl" to imageUrl
+            "imageUrl" to imageUrl,
+            "lat" to "lat",
+            "long" to "long"
         )
 
         db.collection("users").document(email).set(user).addOnSuccessListener { }

@@ -14,7 +14,7 @@ object SharedPref {
     }
 
     fun putBoolean(key:String,value: Boolean){
-        preferences.edit().putBoolean(key,value).commit()
+        preferences.edit().putBoolean(key,value).apply()
     }
 
     fun getBoolean(key:String):Boolean {

@@ -1,6 +1,8 @@
 package com.lbdev.familyhelp
 
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,6 +12,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.RequiresApi
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -29,14 +33,38 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
         mContext = context
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val sendInviteButton = requireView().findViewById<Button>(R.id.btnSendInvite)
+        val greenCard = requireView().findViewById<CardView>(R.id.green_card)
+        val pinkCard = requireView().findViewById<CardView>(R.id.pink_card)
         sendInviteButton.setOnClickListener {
             sendInvite()
         }
 
+
+//        val intent = Intent(context, LocationService::class.java)
+//            .apply {
+//            action = LocationService.ACTION_START
+//            Log.d("TAG", "onViewCreated: intent de andar aya")
+//        }
+//        context?.startForegroundService(intent)
+
+        pinkCard.setOnClickListener {
+            val intent = Intent(mContext, LocationService::class.java).apply {
+                action = LocationService.ACTION_START
+            }
+            mContext.startForegroundService(intent)
+        }
+
+        greenCard.setOnClickListener {
+            Intent(mContext, LocationService::class.java).apply {
+                action = LocationService.ACTION_STOP
+                mContext.startService(this)
+            }
+        }
         getInvites()
     }
 
@@ -89,7 +117,7 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
         firestore.collection("users")
             .document(mail)
             .collection("invites")
-            .document("sham@gmail.com").set(data)
+            .document(senderMail).set(data)
             .addOnSuccessListener {
 
             }
