@@ -14,6 +14,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 class MainActivity : AppCompatActivity() {
 
@@ -77,20 +79,22 @@ class MainActivity : AppCompatActivity() {
         val email = currentUser?.email.toString()
         val phoneNum = currentUser?.phoneNumber.toString()
         val imageUrl = currentUser?.photoUrl.toString()
+        Log.d("TAG", "onCreate: $email this is current user")
 
         val db = Firebase.firestore
+
 
         val user = hashMapOf(
             "name" to name,
             "email" to email,
             "phoneNumber" to phoneNum,
             "imageUrl" to imageUrl,
-            "lat" to "lat",
-            "long" to "long"
+            "lat" to 10.0,
+            "long" to 10.0
         )
-
         db.collection("users").document(email).set(user).addOnSuccessListener { }
             .addOnFailureListener { }
+
     }
 
     private fun closeInvite(inviteButton: ImageView) {

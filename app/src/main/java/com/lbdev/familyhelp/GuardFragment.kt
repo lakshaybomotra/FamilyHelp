@@ -44,14 +44,6 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
             sendInvite()
         }
 
-
-//        val intent = Intent(context, LocationService::class.java)
-//            .apply {
-//            action = LocationService.ACTION_START
-//            Log.d("TAG", "onViewCreated: intent de andar aya")
-//        }
-//        context?.startForegroundService(intent)
-
         pinkCard.setOnClickListener {
             val intent = Intent(mContext, LocationService::class.java).apply {
                 action = LocationService.ACTION_START
@@ -91,7 +83,6 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
                     if (list.isEmpty()) {
                         recycler.visibility = View.GONE;
                         emptyView.visibility = View.VISIBLE;
-                        Log.d("TAG", "getMembers: inside isempty")
                     }
                     else {
                         recycler.visibility = View.VISIBLE;
@@ -119,7 +110,10 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
             .collection("invites")
             .document(senderMail).set(data)
             .addOnSuccessListener {
-
+                firestore.collection("users")
+                    .document(senderMail)
+                    .collection("members")
+                    .document(mail).set(data)
             }
             .addOnFailureListener {
 
@@ -154,7 +148,10 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
             .collection("invites")
             .document(email).set(data)
             .addOnSuccessListener {
-
+                firestore.collection("users")
+                    .document(email)
+                    .collection("members")
+                    .document(senderMail).set(data)
             }
             .addOnFailureListener {
 
@@ -177,7 +174,10 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
             .collection("invites")
             .document(email).set(data)
             .addOnSuccessListener {
-
+                firestore.collection("users")
+                    .document(email)
+                    .collection("members")
+                    .document(senderMail).set(data)
             }
             .addOnFailureListener {
 

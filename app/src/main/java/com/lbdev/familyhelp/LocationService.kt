@@ -4,10 +4,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.IBinder
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
@@ -39,7 +36,7 @@ class LocationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when (intent?.action) {
+        when(intent?.action) {
             ACTION_START -> start()
             ACTION_STOP -> stop()
         }
@@ -60,8 +57,8 @@ class LocationService : Service() {
             .getLocationUpdates(10000L)
             .catch { e -> e.printStackTrace() }
             .onEach { location ->
-                val lat = location.latitude.toString()
-                val long = location.longitude.toString()
+                val lat = location.latitude
+                val long = location.longitude
 
                 val currentUser = FirebaseAuth.getInstance().currentUser
                 val email = currentUser?.email.toString()
@@ -76,6 +73,8 @@ class LocationService : Service() {
                 db.collection("users").document(email).update(locationData).addOnSuccessListener { }
                     .addOnFailureListener { }
 
+                db.collection("users").document(email).collection("location").document("lastLoc").set(locationData)
+
                 val updatedNotification = notification.setContentText(
                     "Location: ($lat, $long)"
                 )
@@ -83,9 +82,7 @@ class LocationService : Service() {
             }
             .launchIn(serviceScope)
 
-        Log.d("TAG", "start: before startforegroumd")
         startForeground(1, notification.build())
-//        notificationManager.notify(1, notification.build())
     }
 
     private fun stop() {
