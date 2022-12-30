@@ -20,13 +20,23 @@
         android:background="@color/white"
         android:padding="@dimen/dimen_16">
 
-        <ImageView
+        <androidx.cardview.widget.CardView
+            app:cardCornerRadius = "160dp"
             android:id="@+id/img_user"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/ic_avatar"
+            app:cardBackgroundColor="@color/white"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width = "64dp"
+            android:layout_height = "64dp">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:id="@+id/img_user_image"
+                android:layout_height="64dp"
+                android:scaleType="centerCrop"
+                 />
+
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/name"

@@ -89,12 +89,25 @@ class MainActivity : AppCompatActivity() {
             "email" to email,
             "phoneNumber" to phoneNum,
             "imageUrl" to imageUrl,
-            "lat" to 10.0,
-            "long" to 10.0
+            "live" to false
         )
-        db.collection("users").document(email).set(user).addOnSuccessListener { }
-            .addOnFailureListener { }
 
+        db.collection("users").get().addOnSuccessListener { users ->
+            var totalUsers = users.size()
+            var flag = 0
+            while (totalUsers>0)
+            {
+                if (users.documents[totalUsers-1].data?.get("email").toString() == email)
+                {
+                    flag=1
+                }
+                totalUsers -= 1
+            }
+            if (flag==0){
+                db.collection("users").document(email).set(user).addOnSuccessListener { }
+                    .addOnFailureListener { }
+            }
+        }
     }
 
     private fun closeInvite(inviteButton: ImageView) {

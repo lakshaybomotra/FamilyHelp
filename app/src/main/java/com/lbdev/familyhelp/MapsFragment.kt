@@ -31,9 +31,23 @@ class MapsFragment : Fragment() {
          * install it inside the SupportMapFragment. This method will only be triggered once the
          * user has installed Google Play services and returned to the app.
          */
-        val sydney = LatLng(31.6321744, 74.8956731)
-        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker on Me"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        val kerala = LatLng(10.850516, 76.271080)
+        val amritsar = LatLng(31.633980, 74.872261)
+        val delhi = LatLng(28.704060, 77.102493)
+
+        val locationArrayList = arrayListOf<LatLng>()
+
+        locationArrayList.add(kerala)
+        locationArrayList.add(amritsar)
+        locationArrayList.add(delhi)
+
+        for (item in locationArrayList)
+        {
+            googleMap.addMarker(MarkerOptions().position(item).title("Marker on Me"))
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(item))
+        }
+//        googleMap.addMarker(MarkerOptions().position(kerala).title("Marker on Me"))
+//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(kerala))
         if (ContextCompat.checkSelfPermission(requireContext(),Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             googleMap.isMyLocationEnabled = true
         }
