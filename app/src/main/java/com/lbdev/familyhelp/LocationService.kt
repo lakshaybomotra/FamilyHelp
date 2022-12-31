@@ -72,7 +72,7 @@ class LocationService : Service() {
                     Log.d("current network is:", "start: WIFI is connected")
                 }
                 else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)){
-                    deviceNetwork = "Data"
+                    deviceNetwork = "4G"
                     Log.d("current network is:", "start: Mobile Data is connected")
                 }
             }

@@ -45,6 +45,45 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val name = currentUser?.displayName.toString()
+        val email = currentUser?.email.toString()
+        val phoneNum = currentUser?.phoneNumber.toString()
+        val imageUrl = currentUser?.photoUrl.toString()
+        Log.d("TAG", "onCreate: $email this is current user")
+
+        val db = Firebase.firestore
+
+
+        val user = hashMapOf(
+            "name" to name,
+            "email" to email,
+            "phoneNumber" to phoneNum,
+            "imageUrl" to imageUrl,
+            "live" to false,
+            "lat" to 10.0,
+            "long" to 10.0
+        )
+
+        db.collection("users").get().addOnSuccessListener { users ->
+            var totalUsers = users.size()
+            var flag = 0
+            while (totalUsers > 0) {
+                if (users.documents[totalUsers - 1].data?.get("email").toString() == email) {
+                    flag = 1
+                }
+                totalUsers -= 1
+            }
+            if (flag == 0) {
+                db.collection("users").document(email).set(user).addOnSuccessListener {
+                    bottomBar.selectedItemId = R.id.nav_home
+                }
+                    .addOnFailureListener { }
+            }
+        }
+
+        val userData = db.collection("users").document(email).get()
+
         bottomBar.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_guard -> {
@@ -73,41 +112,6 @@ class MainActivity : AppCompatActivity() {
 
         bottomBar.selectedItemId = R.id.nav_home
 
-
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        val name = currentUser?.displayName.toString()
-        val email = currentUser?.email.toString()
-        val phoneNum = currentUser?.phoneNumber.toString()
-        val imageUrl = currentUser?.photoUrl.toString()
-        Log.d("TAG", "onCreate: $email this is current user")
-
-        val db = Firebase.firestore
-
-
-        val user = hashMapOf(
-            "name" to name,
-            "email" to email,
-            "phoneNumber" to phoneNum,
-            "imageUrl" to imageUrl,
-            "live" to false
-        )
-
-        db.collection("users").get().addOnSuccessListener { users ->
-            var totalUsers = users.size()
-            var flag = 0
-            while (totalUsers>0)
-            {
-                if (users.documents[totalUsers-1].data?.get("email").toString() == email)
-                {
-                    flag=1
-                }
-                totalUsers -= 1
-            }
-            if (flag==0){
-                db.collection("users").document(email).set(user).addOnSuccessListener { }
-                    .addOnFailureListener { }
-            }
-        }
     }
 
     private fun closeInvite(inviteButton: ImageView) {
