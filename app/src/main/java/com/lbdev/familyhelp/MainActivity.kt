@@ -24,26 +24,18 @@ class MainActivity : AppCompatActivity() {
         Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.READ_CONTACTS
     )
+    lateinit var database: MyFamilyDatabase
 
     val permissionCode = 47
-    var state = "close"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         askForPermission()
 
+        database = MyFamilyDatabase.getDatabase(applicationContext)
         val bottomBar = findViewById<BottomNavigationView>(R.id.bottom_bar)
-        val inviteButton = findViewById<ImageView>(R.id.openInvite)
-        inviteButton.setOnClickListener {
-            if (state == "close") {
-                openInvite(inviteButton)
-                state = "open"
-            } else {
-                closeInvite(inviteButton)
-                state = "close"
-            }
-        }
+
 
         val currentUser = FirebaseAuth.getInstance().currentUser
         val name = currentUser?.displayName.toString()
@@ -71,6 +63,7 @@ class MainActivity : AppCompatActivity() {
             while (totalUsers > 0) {
                 if (users.documents[totalUsers - 1].data?.get("email").toString() == email) {
                     flag = 1
+                    setUserData()
                 }
                 totalUsers -= 1
             }
@@ -82,27 +75,18 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val userData = db.collection("users").document(email).get()
-
         bottomBar.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_guard -> {
-                    closeInvite(inviteButton)
-                    inviteButton.isVisible = false
                     inflateFragment(GuardFragment.newInstance())
                 }
                 R.id.nav_home -> {
-                    inviteButton.isVisible = true
                     inflateFragment(HomeFragment.newInstance())
                 }
                 R.id.nav_dashboard -> {
-                    closeInvite(inviteButton)
-                    inviteButton.isVisible = false
                     inflateFragment(MapsFragment())
                 }
                 R.id.nav_profile -> {
-                    closeInvite(inviteButton)
-                    inviteButton.isVisible = false
                     inflateFragment(ProfileFragment.newInstance())
                 }
             }
@@ -114,26 +98,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun closeInvite(inviteButton: ImageView) {
-        inviteButton.setImageResource(R.drawable.ic_up)
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        if (fragmentManager.backStackEntryCount > 0) {
-            fragmentManager.popBackStack();
-        }
-        fragmentTransaction.commit();
-        state = "close"
-    }
+    private fun setUserData() {
 
-    private fun openInvite(inviteButton: ImageView) {
-        inviteButton.setImageResource(R.drawable.ic_down)
-        val fragment = InviteFragment()
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.invite_container, fragment)
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
-        state = "open"
     }
 
     private fun askForPermission() {

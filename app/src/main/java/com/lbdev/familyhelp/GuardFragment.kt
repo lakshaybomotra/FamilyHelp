@@ -12,16 +12,19 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
 
@@ -33,6 +36,10 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
     lateinit var mContext: Context
     lateinit var mail: String
     lateinit var email: EditText
+    lateinit var database: MyFamilyDatabase
+    lateinit var recycler: RecyclerView
+    lateinit var emptyView: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -41,16 +48,36 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
+        database = MyFamilyDatabase.getDatabase(mContext)
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        recycler = requireView().findViewById(R.id.invite_check_rv)
+        emptyView = requireView().findViewById(R.id.empty_view)
+
+        val firestore = Firebase.firestore
 
         val sendInviteButton = requireView().findViewById<Button>(R.id.btnSendInvite)
         val greenCard = requireView().findViewById<CardView>(R.id.green_card)
         val pinkCard = requireView().findViewById<CardView>(R.id.pink_card)
+        val locStatus = requireView().findViewById<TextView>(R.id.text_location_status)
+        val locDes = requireView().findViewById<TextView>(R.id.text_location_des)
+        val locStatusImg = requireView().findViewById<ImageView>(R.id.img_location_status)
         email = requireView().findViewById(R.id.inviteEmailId)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            database.userDao().getLiveStatus().forEach {
+                if (it.liveStatus){
+                    locStatus.text = "LOCATION ON"
+                    locDes.text = "Turn off when you want to stop sharing location with your members."
+                    locStatusImg.setImageResource(R.drawable.icon_loc_on)
+                }
+            }
+        }
+
         sendInviteButton.setOnClickListener {
             mail= email.text.toString()
             sendInvite(mail)
@@ -59,19 +86,55 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
         }
 
         pinkCard.setOnClickListener {
-            val intent = Intent(mContext, LocationService::class.java).apply {
-                action = LocationService.ACTION_START
-            }
-            mContext.startForegroundService(intent)
+
         }
 
         greenCard.setOnClickListener {
-            Intent(mContext, LocationService::class.java).apply {
-                action = LocationService.ACTION_STOP
-                mContext.startService(this)
+            if (locStatus.text.equals("LOCATION OFF")){
+                CoroutineScope(Dispatchers.IO).launch {
+                    insertUserData(true)
+                    database.userDao().getLiveStatus().forEach()
+                    {
+                        Log.i("Fetch Records", "Id:  : ${it.liveStatus}")
+                    }
+                }
+                locStatus.text = "LOCATION ON"
+                locDes.text = "Turn off when you want to stop sharing location with your members."
+                locStatusImg.setImageResource(R.drawable.icon_loc_on)
+                val intent = Intent(mContext, LocationService::class.java).apply {
+                    action = LocationService.ACTION_START
+                }
+                mContext.startForegroundService(intent)
+
             }
+            else{
+                CoroutineScope(Dispatchers.IO).launch {
+                    insertUserData(false)
+                    database.userDao().getLiveStatus().forEach()
+                    {
+                        Log.i("Fetch Records", "Id:  : ${it.liveStatus}")
+                    }
+                }
+                locStatus.text = "LOCATION OFF"
+                locDes.text = "Turn on when you need to share location with your members."
+                locStatusImg.setImageResource(R.drawable.icon_loc_off)
+                Intent(mContext, LocationService::class.java).apply {
+                    action = LocationService.ACTION_STOP
+                    mContext.startService(this)
+                }
+            }
+
         }
-        getInvites()
+        CoroutineScope(Dispatchers.IO).launch {
+            getInvites()
+        }
+    }
+
+    private suspend fun insertUserData(live: Boolean) {
+        var userModel = UserModel()
+        userModel.liveStatus = live
+        userModel.live = "liveStatus"
+        database.userDao().saveLiveStatus(userModel)
     }
 
     private fun getInvites() {
@@ -89,8 +152,6 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
                     }
 
                     val adapter = InvitiesAdapter(list,this)
-                    val recycler = requireView().findViewById<RecyclerView>(R.id.invite_check_rv)
-                    val emptyView = requireView().findViewById<TextView>(R.id.empty_view)
                     recycler.layoutManager = LinearLayoutManager(mContext)
                     recycler.adapter = adapter
 

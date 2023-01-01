@@ -128,7 +128,9 @@ class LocationService : Service() {
             "live" to false
         )
 
-        db.collection("users").document(email).update(liveData).addOnSuccessListener { }
+        db.collection("users").document(email).update(liveData).addOnSuccessListener {
+            Log.d("locationService Stop", "stop: this is working ")
+        }
             .addOnFailureListener { }
         stopForeground(true)
         stopSelf()

@@ -5,10 +5,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [ContactModel::class], version = 1, exportSchema = false)
+@Database(entities = [ContactModel::class,UserModel::class,MemberModel::class], version = 1, exportSchema = false)
 public abstract class MyFamilyDatabase : RoomDatabase() {
 
     abstract fun contactDao(): ContactDao
+    abstract fun userDao(): UserDao
+    abstract fun memberDao(): MemberDao
 
 
     companion object {

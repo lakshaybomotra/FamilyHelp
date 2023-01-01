@@ -80,12 +80,12 @@
         app:layout_constraintTop_toBottomOf="@+id/pink_card" />
 
     <TextView
-        android:id="@+id/text_guard"
+        android:id="@+id/text_location_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dimen_16"
         android:elevation="@dimen/dimen_16"
-        android:text="@string/guard"
+        android:text="@string/location_off"
         android:textColor="@color/white"
         android:textSize="@dimen/dimen_24_sp"
         android:textStyle="bold"
@@ -93,27 +93,38 @@
         app:layout_constraintTop_toTopOf="@id/green_card" />
 
     <TextView
-        android:id="@+id/text_guard_des"
+        android:id="@+id/text_location_des"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dimen_16"
         android:elevation="@dimen/dimen_16"
-        android:text="@string/guard_des"
+        android:text="@string/location_des_off"
         android:textColor="#E7E7E9"
-        app:layout_constraintEnd_toStartOf="@id/img_guard"
+        app:layout_constraintEnd_toStartOf="@id/img_location"
         app:layout_constraintStart_toStartOf="@id/green_card"
-        app:layout_constraintTop_toBottomOf="@id/text_guard" />
+        app:layout_constraintTop_toBottomOf="@id/text_location_status" />
 
     <ImageView
-        android:id="@+id/img_guard"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
+        android:id="@+id/img_location"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:layout_margin="@dimen/dimen_16"
+        android:paddingRight="@dimen/dimen_16"
         android:elevation="@dimen/dimen_16"
-        android:src="@drawable/ic_guard"
-        app:layout_constraintBottom_toBottomOf="@id/green_card"
+        android:src="@drawable/icon_location"
         app:layout_constraintEnd_toEndOf="@id/green_card"
         app:layout_constraintTop_toTopOf="@id/green_card" />
+
+    <ImageView
+        android:id="@+id/img_location_status"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:elevation="@dimen/dimen_16"
+        android:layout_marginEnd="@dimen/dimen_16"
+        android:src="@drawable/icon_loc_off"
+        app:layout_constraintEnd_toEndOf="@id/img_location"
+        app:layout_constraintStart_toStartOf="@id/img_location"
+        app:layout_constraintTop_toBottomOf="@id/img_location" />
 
     <LinearLayout
         android:id="@+id/llSendInvite"

@@ -37,7 +37,6 @@ class InviteFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         return inflater.inflate(R.layout.fragment_invite, container, false)
     }
 
@@ -71,11 +70,8 @@ class InviteFragment : BottomSheetDialogFragment() {
     }
 
     private suspend fun insertDatabaseContacts(listContacts: ArrayList<ContactModel>) {
-//        if (context!=null)
-//        {
             val database = MyFamilyDatabase.getDatabase(mContext)
             database.contactDao().insertAll(listContacts)
-//        }
     }
 
     @SuppressLint("Range")

@@ -80,7 +80,7 @@
             android:layout_margin="18dp"
             android:textStyle="bold"
             android:textSize="@dimen/dimen_24_sp"
-            android:text="Lakshay Bomotra" />
+            android:text="" />
 
 
         <com.google.android.material.card.MaterialCardView

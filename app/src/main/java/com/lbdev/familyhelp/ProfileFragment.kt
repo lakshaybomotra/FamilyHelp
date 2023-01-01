@@ -1,11 +1,13 @@
 package com.lbdev.familyhelp
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,16 +19,24 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    lateinit var database: MyFamilyDatabase
+    lateinit var mContext: Context
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mContext = context
+        database = MyFamilyDatabase.getDatabase(mContext)
     }
 
     override fun onCreateView(
@@ -35,6 +45,7 @@ class ProfileFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -79,14 +90,30 @@ class ProfileFragment : Fragment() {
 
         
         logout.setOnClickListener{
-            SharedPref.putBoolean(PrefConstants.IS_USER_LOGGED_IN, false)
-            FirebaseAuth.getInstance().signOut()
             Toast.makeText(context, "$uName Logged Out", Toast.LENGTH_SHORT).show()
-            val intent = Intent(activity, SplashScreen::class.java)
-            startActivity(intent)
-            activity?.finish()
+            Intent(context, LocationService::class.java).apply {
+                action = LocationService.ACTION_STOP
+                context?.startService(this)
+            }
+            CoroutineScope(Dispatchers.IO).launch {
+                SharedPref.putBoolean(PrefConstants.IS_USER_LOGGED_IN, false)
+                FirebaseAuth.getInstance().signOut()
+                insertUserData()
+                val intent = Intent(activity, SplashScreen::class.java).apply {
+                    action = LocationService.ACTION_STOP
+                }
+                startActivity(intent)
+                activity?.finish()
+            }
         }
 
+    }
+
+    private fun insertUserData() {
+        val userModel = UserModel()
+        userModel.liveStatus = false
+        userModel.live = "liveStatus"
+        database.userDao().saveLiveStatus(userModel)
     }
 
     companion object {

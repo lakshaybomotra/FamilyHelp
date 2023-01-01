@@ -18,6 +18,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.log
@@ -26,9 +30,12 @@ import kotlin.math.roundToInt
 class HomeFragment : Fragment() {
 
     lateinit var mContext: Context
-    val listMembers = mutableListOf<MemberModel>()
+    lateinit var adapter: MemberAdapter
+    lateinit var recycler: RecyclerView
+
     private lateinit var geocoder: Geocoder
     lateinit var swipeToRefreshLV: SwipeRefreshLayout
+    private val listMembers: ArrayList<MemberModel> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +59,6 @@ class HomeFragment : Fragment() {
         swipeToRefreshLV = requireView().findViewById(R.id.idSwipeToRefresh)
         swipeToRefreshLV.setOnRefreshListener {
             swipeToRefreshLV.isRefreshing = false
-//            getMembers()
             val transaction = activity?.supportFragmentManager?.beginTransaction()
             if (transaction != null) {
                 transaction.replace(R.id.container, HomeFragment())
@@ -61,25 +67,32 @@ class HomeFragment : Fragment() {
             }
         }
 
+        adapter = MemberAdapter(listMembers)
+
         getMembers()
+        fetchDatabaseMembers()
+//        CoroutineScope(Dispatchers.IO).launch {
+//            insertDatabaseMembers(getMembers())
+//        }
+        recycler = requireView().findViewById(R.id.rv_members)
+        recycler.layoutManager = LinearLayoutManager(mContext)
+        recycler.adapter = adapter
+    }
 
-        val threeDots = requireView().findViewById<ImageView>(R.id.icon_three_dots)
-        threeDots.setOnClickListener {
-            SharedPref.putBoolean(PrefConstants.IS_USER_LOGGED_IN, false)
-            FirebaseAuth.getInstance().signOut()
+    private fun fetchDatabaseMembers() {
+        val database = MyFamilyDatabase.getDatabase(mContext)
+        database.memberDao().getAllMembers().observe(viewLifecycleOwner){
+            listMembers.clear()
+            listMembers.addAll(it)
 
-            Intent(mContext, LocationService::class.java).apply {
-                action = LocationService.ACTION_STOP
-                mContext.startService(this)
-            }
+            adapter.notifyDataSetChanged()
         }
     }
 
     private fun getMembers() {
-        val recycler = requireView().findViewById<RecyclerView>(R.id.rv_members)
         val emptyViewHome = requireView().findViewById<TextView>(R.id.empty_view_home)
         val loadingView = requireView().findViewById<TextView>(R.id.loading_view)
-
+        val recyclerView = requireView().findViewById<RecyclerView>(R.id.rv_members)
         val listMembersCheck: ArrayList<String> = ArrayList()
 
         val firestore = Firebase.firestore
@@ -89,30 +102,14 @@ class HomeFragment : Fragment() {
         var cuLat = 10.0
         var cuLong = 10.0
 
-        firestore.collection("users")
-            .document(email).get().addOnSuccessListener {
-                cuLat = it.data?.get("lat") as Double
-                cuLong = it.data?.get("long") as Double
-            }
+        val fireData = firestore.collection("users")
 
-//        var lastLat: Double = 10.0
-//        var lastLong: Double = 10.0
+        fireData.document(email).get().addOnSuccessListener {
+            cuLat = it.data?.get("lat") as Double
+            cuLong = it.data?.get("long") as Double
+        }
 
-//        firestore.collection("users").document(email).collection("location").document("lastLoc").get().addOnSuccessListener { document ->
-//            if (document.data != null) {
-//                lastLat = document.data?.get("lat") as Double
-//                lastLong = document.data?.get("long") as Double
-//            }
-//        }.addOnSuccessListener {
-//            val loc = hashMapOf(
-//                "lat" to lastLat,
-//                "long" to lastLong
-//            )
-//            firestore.collection("users").document(email).update(loc as Map<String, Any>)
-//        }
-
-        firestore.collection("users")
-            .document(email)
+        fireData.document(email)
             .collection("members").get().addOnCompleteListener {
                 if (it.isSuccessful) {
                     for (item in it.result) {
@@ -125,68 +122,70 @@ class HomeFragment : Fragment() {
                     val length = listMembersCheck.size
                     listMembersCheck.forEach {
                         val dis = FloatArray(1)
-                        firestore.collection("users")
-                            .document(it).get().addOnSuccessListener { document ->
-                                if (document != null) {
-                                    if (document.data?.get("lat") != null) {
-                                        Location.distanceBetween(
-                                            cuLat,
-                                            cuLong,
-                                            document.data?.get("lat") as Double,
-                                            document.data?.get("long") as Double,
-                                            dis
+                        fireData.document(it).get().addOnSuccessListener { document ->
+                            if (document != null) {
+                                if (document.data?.get("lat") != null) {
+                                    Location.distanceBetween(
+                                        cuLat,
+                                        cuLong,
+                                        document.data?.get("lat") as Double,
+                                        document.data?.get("long") as Double,
+                                        dis
+                                    )
+                                    if (document.data?.get("live") == true) {
+                                        listMembers.add(
+                                            MemberModel(
+                                                document.data?.get("name").toString(),
+                                                "Live: " + getAddress(
+                                                    document.data?.get("lat"),
+                                                    document.data?.get("long")
+                                                ),
+                                                document.data?.get("battery").toString() + "%",
+                                                ((dis[0] / 1000).roundToInt()).toString() + "KM",
+                                                document.data?.get("deviceNetwork").toString(),
+                                                document.data?.get("imageUrl").toString()
+                                            )
                                         )
-                                        if (document.data?.get("live") == true) {
-                                            listMembers.add(
-                                                MemberModel(
-                                                    document.data?.get("name").toString(),
-                                                    "Live: " + getAddress(
-                                                        document.data?.get("lat"),
-                                                        document.data?.get("long")
-                                                    ),
-                                                    document.data?.get("battery").toString()+"%",
-                                                    ((dis[0] / 1000).roundToInt()).toString() + "KM",
-                                                    document.data?.get("deviceNetwork").toString(),
-                                                    document.data?.get("imageUrl").toString()
-                                                )
-                                            )
-                                        } else {
-                                            listMembers.add(
-                                                MemberModel(
-                                                    document.data?.get("name").toString(),
-                                                    "Last At: " + getAddress(
-                                                        document.data?.get("lat"),
-                                                        document.data?.get("long")
-                                                    ),
-                                                    document.data?.get("battery").toString()+"%",
-                                                    ((dis[0] / 1000).roundToInt()).toString() + "KM",
-                                                    document.data?.get("deviceNetwork").toString(),
-                                                    document.data?.get("imageUrl").toString()
-                                                )
-                                            )
-                                        }
-
                                     } else {
                                         listMembers.add(
                                             MemberModel(
                                                 document.data?.get("name").toString(),
-                                                "User Not Sharing Location",
-                                                "88%",
-                                                "552M",
-                                                "No",
+                                                "Last At: " + getAddress(
+                                                    document.data?.get("lat"),
+                                                    document.data?.get("long")
+                                                ),
+                                                document.data?.get("battery").toString() + "%",
+                                                ((dis[0] / 1000).roundToInt()).toString() + "KM",
+                                                document.data?.get("deviceNetwork").toString(),
                                                 document.data?.get("imageUrl").toString()
                                             )
                                         )
                                     }
+
                                 } else {
-                                    Log.d("TAG", "No such document")
+                                    listMembers.add(
+                                        MemberModel(
+                                            document.data?.get("name").toString(),
+                                            "User Not Sharing Location",
+                                            "88%",
+                                            "552KM",
+                                            "No",
+                                            document.data?.get("imageUrl").toString()
+                                        )
+                                    )
                                 }
-                                if (i == length + 1) {
-                                    val adapter = MemberAdapter(listMembers)
-                                    recycler.layoutManager = LinearLayoutManager(mContext)
-                                    recycler.adapter = adapter
-                                }
+                            } else {
+                                Log.d("TAG", "No such document")
                             }
+                        }.addOnCompleteListener {
+                            val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
+                                throwable.printStackTrace()
+                            }
+                            CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+                                adapter = MemberAdapter(listMembers)
+                                insertDatabaseMembers(listMembers)
+                            }
+                        }
                             .addOnFailureListener {
                                 Log.d("TAG", "get failed with ")
                             }
@@ -195,17 +194,22 @@ class HomeFragment : Fragment() {
 
                     if (listMembersCheck.isEmpty()) {
                         emptyViewHome.visibility = View.VISIBLE
-                        recycler.visibility = View.GONE
+                        recyclerView.visibility = View.GONE
                         loadingView.visibility = View.GONE
                         Log.d("TAG", "getMembers: inside isempty")
                     } else {
-                        recycler.visibility = View.VISIBLE
+                        recyclerView.visibility = View.VISIBLE
                         emptyViewHome.visibility = View.GONE
                         loadingView.visibility = View.GONE
                         Log.d("TAG", "getMembers: inside else")
                     }
                 }
             }
+    }
+
+    private suspend fun insertDatabaseMembers(listMembers: ArrayList<MemberModel>) {
+        val database = MyFamilyDatabase.getDatabase(mContext)
+        database.memberDao().insertAll(listMembers)
     }
 
     private fun getAddress(lat: Any?, long: Any?): String {
