@@ -20,7 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FamilyHelp"
         tools:targetApi="31">
-        <service android:name=".LocationService" android:foregroundServiceType="location" />
+        <service
+            android:name=".LocationService"
+            android:foregroundServiceType="location" />
 
         <activity
             android:name=".SplashScreen"
@@ -43,9 +45,9 @@
                 android:value="" />
         </activity>
 
-<!--        <meta-data-->
-<!--            android:name="com.google.android.geo.API_KEY"-->
-<!--            android:value="${MAPS_API_KEY}" />-->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
 
         <activity
             android:name=".MainActivity"

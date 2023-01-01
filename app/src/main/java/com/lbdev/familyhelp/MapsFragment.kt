@@ -48,7 +48,8 @@ class MapsFragment : Fragment() {
         }
 //        googleMap.addMarker(MarkerOptions().position(kerala).title("Marker on Me"))
 //        googleMap.moveCamera(CameraUpdateFactory.newLatLng(kerala))
-        if (ContextCompat.checkSelfPermission(requireContext(),Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             googleMap.isMyLocationEnabled = true
         }
     }
