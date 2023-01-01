@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     )
     lateinit var database: MyFamilyDatabase
 
+    val db = Firebase.firestore
     val permissionCode = 47
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,15 +37,12 @@ class MainActivity : AppCompatActivity() {
         database = MyFamilyDatabase.getDatabase(applicationContext)
         val bottomBar = findViewById<BottomNavigationView>(R.id.bottom_bar)
 
-
         val currentUser = FirebaseAuth.getInstance().currentUser
         val name = currentUser?.displayName.toString()
         val email = currentUser?.email.toString()
         val phoneNum = currentUser?.phoneNumber.toString()
         val imageUrl = currentUser?.photoUrl.toString()
         Log.d("TAG", "onCreate: $email this is current user")
-
-        val db = Firebase.firestore
 
 
         val user = hashMapOf(
@@ -63,7 +61,7 @@ class MainActivity : AppCompatActivity() {
             while (totalUsers > 0) {
                 if (users.documents[totalUsers - 1].data?.get("email").toString() == email) {
                     flag = 1
-                    setUserData()
+                    setUserData(email)
                 }
                 totalUsers -= 1
             }
@@ -98,8 +96,10 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun setUserData() {
+    private fun setUserData(email: String) {
+        db.collection("users").document(email).get().addOnSuccessListener {
 
+        }
     }
 
     private fun askForPermission() {
