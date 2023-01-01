@@ -3,11 +3,14 @@
     <string name="security">Security</string>
     <string name="sos">SOS</string>
     <string name="sos_des">In case of emergency, keep telling family members to contact me</string>
-    <string name="guard">GUARD</string>
-    <string name="guard_des">Open when you are on a potentially dangerous journey.</string>
+    <string name="location_off">LOCATION OFF</string>
+    <string name="location_des_off">Turn on when you need to share location with your members.</string>
     <string name="me_home">Home</string>
     <string name="me_dashboard">Dashboard</string>
     <string name="me_guard">Guard</string>
     <string name="me_profile">Profile</string>
     <string name="myfamily">My Family</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="user">User</string>
+    <string name="continue_with_google">Continue with Google</string>
 </resources>
