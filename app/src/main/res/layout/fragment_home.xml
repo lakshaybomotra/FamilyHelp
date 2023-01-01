@@ -51,22 +51,24 @@
             app:layout_constraintBottom_toBottomOf="parent"
             tools:listitem="@layout/item_member" />
 
-        <TextView
+        <ProgressBar
             android:id="@+id/loading_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:visibility="visible"
+<<<<<<< Updated upstream
             android:paddingTop="@dimen/dimen_16"
             android:textColor="@color/black"
             android:textAllCaps="true"
             android:layout_margin="@dimen/dimen_16"
             android:textSize="@dimen/dimen_24_sp"
+=======
+>>>>>>> Stashed changes
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:text="Loading Members..." />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView
             android:id="@+id/empty_view_home"

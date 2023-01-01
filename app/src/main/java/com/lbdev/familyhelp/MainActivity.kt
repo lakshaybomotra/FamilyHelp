@@ -4,27 +4,25 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageView
+import android.view.ViewGroup
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 class MainActivity : AppCompatActivity() {
 
-    private val perissions = arrayOf(
+    private val permissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.READ_CONTACTS
+        Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
+    val db = Firebase.firestore
     val permissionCode = 47
     var state = "close"
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         askForPermission()
 
         val bottomBar = findViewById<BottomNavigationView>(R.id.bottom_bar)
+<<<<<<< Updated upstream
         val inviteButton = findViewById<ImageView>(R.id.openInvite)
         inviteButton.setOnClickListener {
             if (state == "close") {
@@ -44,6 +43,8 @@ class MainActivity : AppCompatActivity() {
                 state = "close"
             }
         }
+=======
+>>>>>>> Stashed changes
 
         val currentUser = FirebaseAuth.getInstance().currentUser
         val name = currentUser?.displayName.toString()
@@ -51,9 +52,6 @@ class MainActivity : AppCompatActivity() {
         val phoneNum = currentUser?.phoneNumber.toString()
         val imageUrl = currentUser?.photoUrl.toString()
         Log.d("TAG", "onCreate: $email this is current user")
-
-        val db = Firebase.firestore
-
 
         val user = hashMapOf(
             "name" to name,
@@ -71,6 +69,10 @@ class MainActivity : AppCompatActivity() {
             while (totalUsers > 0) {
                 if (users.documents[totalUsers - 1].data?.get("email").toString() == email) {
                     flag = 1
+<<<<<<< Updated upstream
+=======
+                    setUserData(email)
+>>>>>>> Stashed changes
                 }
                 totalUsers -= 1
             }
@@ -114,6 +116,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+<<<<<<< Updated upstream
     private fun closeInvite(inviteButton: ImageView) {
         inviteButton.setImageResource(R.drawable.ic_up)
         val fragmentManager = supportFragmentManager
@@ -134,10 +137,16 @@ class MainActivity : AppCompatActivity() {
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
         state = "open"
+=======
+    private fun setUserData(email: String) {
+        db.collection("users").document(email).get().addOnSuccessListener {
+
+        }
+>>>>>>> Stashed changes
     }
 
     private fun askForPermission() {
-        ActivityCompat.requestPermissions(this, perissions, permissionCode)
+        ActivityCompat.requestPermissions(this, permissions, permissionCode)
     }
 
     private fun inflateFragment(newInstance: Fragment) {
@@ -163,7 +172,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun allPermissionGranted(): Boolean {
-        for (item in perissions) {
+        for (item in permissions) {
             if (ContextCompat.checkSelfPermission(
                     this,
                     item

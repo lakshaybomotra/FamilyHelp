@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,7 +27,15 @@ import kotlin.math.roundToInt
 class HomeFragment : Fragment() {
 
     lateinit var mContext: Context
+<<<<<<< Updated upstream
     val listMembers = mutableListOf<MemberModel>()
+=======
+    lateinit var adapter: MemberAdapter
+    lateinit var recycler: RecyclerView
+    lateinit var emptyViewHome: TextView
+    lateinit var loadingView: ProgressBar
+
+>>>>>>> Stashed changes
     private lateinit var geocoder: Geocoder
     lateinit var swipeToRefreshLV: SwipeRefreshLayout
 
@@ -49,6 +58,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         geocoder = Geocoder(mContext, Locale.getDefault())
+        emptyViewHome = requireView().findViewById(R.id.empty_view_home)
+        loadingView = requireView().findViewById(R.id.loading_view)
         swipeToRefreshLV = requireView().findViewById(R.id.idSwipeToRefresh)
         swipeToRefreshLV.setOnRefreshListener {
             swipeToRefreshLV.isRefreshing = false
@@ -62,24 +73,43 @@ class HomeFragment : Fragment() {
         }
 
         getMembers()
+<<<<<<< Updated upstream
+=======
+        fetchDatabaseMembers()
+
+        recycler = requireView().findViewById(R.id.rv_members)
+        recycler.layoutManager = LinearLayoutManager(mContext)
+        recycler.adapter = adapter
+    }
+>>>>>>> Stashed changes
 
         val threeDots = requireView().findViewById<ImageView>(R.id.icon_three_dots)
         threeDots.setOnClickListener {
             SharedPref.putBoolean(PrefConstants.IS_USER_LOGGED_IN, false)
             FirebaseAuth.getInstance().signOut()
 
+<<<<<<< Updated upstream
             Intent(mContext, LocationService::class.java).apply {
                 action = LocationService.ACTION_STOP
                 mContext.startService(this)
             }
+=======
+            adapter.notifyDataSetChanged()
+
+>>>>>>> Stashed changes
         }
     }
 
     private fun getMembers() {
+<<<<<<< Updated upstream
         val recycler = requireView().findViewById<RecyclerView>(R.id.rv_members)
         val emptyViewHome = requireView().findViewById<TextView>(R.id.empty_view_home)
         val loadingView = requireView().findViewById<TextView>(R.id.loading_view)
 
+=======
+
+        val recyclerView = requireView().findViewById<RecyclerView>(R.id.rv_members)
+>>>>>>> Stashed changes
         val listMembersCheck: ArrayList<String> = ArrayList()
 
         val firestore = Firebase.firestore
@@ -122,7 +152,6 @@ class HomeFragment : Fragment() {
                     }
 
                     var i = 1
-                    val length = listMembersCheck.size
                     listMembersCheck.forEach {
                         val dis = FloatArray(1)
                         firestore.collection("users")
@@ -186,23 +215,33 @@ class HomeFragment : Fragment() {
                                     recycler.layoutManager = LinearLayoutManager(mContext)
                                     recycler.adapter = adapter
                                 }
+<<<<<<< Updated upstream
+=======
+                            } else {
+                                Log.d("TAG", "No such document")
+                            }
+                        }.addOnCompleteListener {
+                            val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
+                                throwable.printStackTrace()
+                            }
+                            CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+                                insertDatabaseMembers(listMembers)
+                                fetchDatabaseMembers()
+>>>>>>> Stashed changes
                             }
                             .addOnFailureListener {
                                 Log.d("TAG", "get failed with ")
                             }
                         i++
                     }
-
                     if (listMembersCheck.isEmpty()) {
                         emptyViewHome.visibility = View.VISIBLE
                         recycler.visibility = View.GONE
                         loadingView.visibility = View.GONE
-                        Log.d("TAG", "getMembers: inside isempty")
                     } else {
                         recycler.visibility = View.VISIBLE
                         emptyViewHome.visibility = View.GONE
                         loadingView.visibility = View.GONE
-                        Log.d("TAG", "getMembers: inside else")
                     }
                 }
             }
@@ -210,10 +249,10 @@ class HomeFragment : Fragment() {
 
     private fun getAddress(lat: Any?, long: Any?): String {
         val address = geocoder.getFromLocation(lat as Double, long as Double, 1)
-        if (address[0].subLocality == null) {
-            return address[0].getAddressLine(0)
+        return if (address[0].subLocality == null) {
+            address[0].getAddressLine(0)
         } else {
-            return address[0].subLocality
+            address[0].subLocality
         }
     }
 

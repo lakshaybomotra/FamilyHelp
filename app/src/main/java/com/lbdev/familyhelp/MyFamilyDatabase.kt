@@ -5,10 +5,18 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
+<<<<<<< Updated upstream
 @Database(entities = [ContactModel::class], version = 1, exportSchema = false)
 public abstract class MyFamilyDatabase : RoomDatabase() {
 
     abstract fun contactDao(): ContactDao
+=======
+@Database(entities = [UserModel::class,MemberModel::class], version = 1, exportSchema = false)
+public abstract class MyFamilyDatabase : RoomDatabase() {
+
+    abstract fun userDao(): UserDao
+    abstract fun memberDao(): MemberDao
+>>>>>>> Stashed changes
 
 
     companion object {
