@@ -1,7 +1,9 @@
 package com.lbdev.familyhelp
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +19,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -93,27 +97,27 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
             if (locStatus.text.equals("LOCATION OFF")){
                 CoroutineScope(Dispatchers.IO).launch {
                     insertUserData(true)
-                    database.userDao().getLiveStatus().forEach()
-                    {
-                        Log.i("Fetch Records", "Id:  : ${it.liveStatus}")
-                    }
                 }
                 locStatus.text = "LOCATION ON"
                 locDes.text = "Turn off when you want to stop sharing location with your members."
                 locStatusImg.setImageResource(R.drawable.icon_loc_on)
-                val intent = Intent(mContext, LocationService::class.java).apply {
-                    action = LocationService.ACTION_START
-                }
-                mContext.startForegroundService(intent)
+                if (ContextCompat.checkSelfPermission(requireContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                    val intent = Intent(mContext, LocationService::class.java).apply {
+                        action = LocationService.ACTION_START
+                    }
+                    mContext.startForegroundService(intent)
+                } else {
 
+                    val intent = Intent(mContext, LocationService::class.java).apply {
+                        action = LocationService.ACTION_START
+                    }
+                    mContext.startForegroundService(intent)
+                }
             }
             else{
                 CoroutineScope(Dispatchers.IO).launch {
                     insertUserData(false)
-                    database.userDao().getLiveStatus().forEach()
-                    {
-                        Log.i("Fetch Records", "Id:  : ${it.liveStatus}")
-                    }
                 }
                 locStatus.text = "LOCATION OFF"
                 locDes.text = "Turn on when you need to share location with your members."
@@ -123,7 +127,6 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
                     mContext.startService(this)
                 }
             }
-
         }
         CoroutineScope(Dispatchers.IO).launch {
             getInvites()
@@ -134,6 +137,7 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
         var userModel = UserModel()
         userModel.liveStatus = live
         userModel.live = "liveStatus"
+        userModel.name = database.userDao().getLiveStatus()[0].name
         database.userDao().saveLiveStatus(userModel)
     }
 

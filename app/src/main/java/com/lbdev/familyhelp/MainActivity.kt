@@ -4,13 +4,9 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -18,6 +14,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -99,7 +96,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUserData(email: String) {
         db.collection("users").document(email).get().addOnSuccessListener {
-
+            var userModel = UserModel()
+            userModel.name = it.data?.get("name").toString()
+            CoroutineScope(Dispatchers.IO).launch {
+                database.userDao().saveUserName(userModel)
+            }
         }
     }
 

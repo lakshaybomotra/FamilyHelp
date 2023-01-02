@@ -11,6 +11,9 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveLiveStatus(live: UserModel)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun saveUserName(name: UserModel)
+
     @Query(value = "Select * from UserModel")
     fun getLiveStatus() : List<UserModel>
 }

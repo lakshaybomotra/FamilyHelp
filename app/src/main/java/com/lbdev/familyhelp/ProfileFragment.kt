@@ -58,10 +58,11 @@ class ProfileFragment : Fragment() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         val email = currentUser?.email.toString()
         var uImage: String = ""
-        var uName: String = "test"
+        CoroutineScope(Dispatchers.IO).launch {
+            getUserData(userName)
+        }
         db.collection("users").document(email).get().addOnSuccessListener { uData ->
             uImage = uData.data?.get("imageUrl").toString()
-            uName = uData.data?.get("name").toString()
         }.addOnCompleteListener {
             val executor = Executors.newSingleThreadExecutor()
             val handler = Handler(Looper.getMainLooper())
@@ -76,21 +77,19 @@ class ProfileFragment : Fragment() {
                     handler.post {
                         userProfile.setImageBitmap(image)
                     }
-                }
-                catch (e: Exception) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
-            userName.text = uName
         }
-        
+
         editProfile.setOnClickListener {
             Toast.makeText(context, "Change profile image", Toast.LENGTH_SHORT).show()
         }
 
-        
-        logout.setOnClickListener{
-            Toast.makeText(context, "$uName Logged Out", Toast.LENGTH_SHORT).show()
+
+        logout.setOnClickListener {
+            Toast.makeText(context, "Logged Out", Toast.LENGTH_SHORT).show()
             Intent(context, LocationService::class.java).apply {
                 action = LocationService.ACTION_STOP
                 context?.startService(this)
@@ -107,6 +106,11 @@ class ProfileFragment : Fragment() {
             }
         }
 
+    }
+
+    private fun getUserData(userName: TextView?) {
+        val name = database.userDao().getLiveStatus()
+        userName?.text = name[0].name
     }
 
     private fun insertUserData() {

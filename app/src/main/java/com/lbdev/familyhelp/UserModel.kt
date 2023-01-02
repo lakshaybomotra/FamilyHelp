@@ -11,5 +11,7 @@ data class UserModel(
     var live: String = "liveStatus",
 
     @ColumnInfo(name ="LiveStatus")
-    var liveStatus:  Boolean = false
+    var liveStatus:  Boolean = false ,
+
+    var name: String = "name"
 )
