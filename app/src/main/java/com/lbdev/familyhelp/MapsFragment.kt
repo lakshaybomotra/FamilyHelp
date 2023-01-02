@@ -3,17 +3,14 @@ package com.lbdev.familyhelp
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.location.Location
-import androidx.fragment.app.Fragment
-
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
-
+import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -23,17 +20,12 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
+import kotlin.math.cos
+import kotlin.math.ln
 
 class MapsFragment : Fragment() {
 
     var hashMap: HashMap<String, LatLng> = HashMap<String, LatLng>()
-    var membersMap: HashMap<String, List<String>> = HashMap<String, List<String>>()
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -98,10 +90,20 @@ class MapsFragment : Fragment() {
                             for (keys in hashMap.keys) {
                                 println("Element at key $keys : ${hashMap[keys]}")
                                 val locat = hashMap[keys]
-                                googleMap.addMarker(
-                                    MarkerOptions().position(locat!!).title("${it.result.data?.get("name")}")
-                                )
-                                googleMap.moveCamera(CameraUpdateFactory.newLatLng(locat))
+                                if (it.result.data?.get("email")==keys){
+                                    googleMap.addMarker(
+                                        MarkerOptions().position(locat!!).title("${it.result.data?.get("name")}")
+                                    )
+                                }
+                                fireData.document(email).get().addOnSuccessListener { currentUserData ->
+                                    val current = LatLng(currentUserData.data!!["lat"] as Double, currentUserData.data!!["long"] as Double)
+                                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(current))
+                                    getZoom(googleMap,current)
+                                    googleMap.uiSettings.isZoomControlsEnabled = true;
+                                    googleMap.uiSettings.isRotateGesturesEnabled = true;
+                                    googleMap.uiSettings.isScrollGesturesEnabled = true;
+                                    googleMap.uiSettings.isTiltGesturesEnabled = true;
+                                }
                             }
                             if (ContextCompat.checkSelfPermission(
                                     requireContext(),
@@ -122,5 +124,18 @@ class MapsFragment : Fragment() {
                     i++
                 }
             }.addOnCompleteListener { }
+    }
+    private fun getZoom(googleMap: GoogleMap, latLngPoint: LatLng) {
+        val metrics: DisplayMetrics = context?.resources?.displayMetrics!!
+        val mapWidth: Float = metrics.widthPixels / metrics.density
+
+        val equatorLength = 40075004
+        val timeAnimationMilis = 1500
+        val latitudinalAdjustment: Double = cos(Math.PI * latLngPoint.latitude / 180.0)
+        val arg: Double = equatorLength * mapWidth * latitudinalAdjustment / (10000 * 256.0)
+        val valToZoom: Double = ln(arg) / ln(2.0)
+        Log.d("TAG", "getZoom: ${valToZoom.toFloat()}")
+
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngPoint, valToZoom.toFloat()), timeAnimationMilis , null)
     }
 }
