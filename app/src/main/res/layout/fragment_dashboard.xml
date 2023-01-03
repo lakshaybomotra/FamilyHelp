@@ -14,7 +14,7 @@
         android:gravity="center"
         android:text="@string/dashboard"
         android:textColor="@color/black"
-        android:textSize="@dimen/dimen_16_sp"
+        android:textSize="@dimen/dimen_16_dp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent" />
 

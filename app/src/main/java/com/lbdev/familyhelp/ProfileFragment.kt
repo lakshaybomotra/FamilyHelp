@@ -52,7 +52,7 @@ class ProfileFragment : Fragment() {
         val db = Firebase.firestore
 
         val userProfile = requireView().findViewById<ImageView>(R.id.ivProfile)
-        val editProfile = requireView().findViewById<ImageView>(R.id.ivEditProfile)
+//        val editProfile = requireView().findViewById<ImageView>(R.id.ivEditProfile)
         val userName = requireView().findViewById<TextView>(R.id.tvUserName)
         val logout = requireView().findViewById<LinearLayout>(R.id.llLogout)
         val currentUser = FirebaseAuth.getInstance().currentUser
@@ -83,9 +83,9 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        editProfile.setOnClickListener {
-            Toast.makeText(context, "Change profile image", Toast.LENGTH_SHORT).show()
-        }
+//        editProfile.setOnClickListener {
+//            Toast.makeText(context, "Change profile image", Toast.LENGTH_SHORT).show()
+//        }
 
 
         logout.setOnClickListener {

@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         val email = currentUser?.email.toString()
         val phoneNum = currentUser?.phoneNumber.toString()
         val imageUrl = currentUser?.photoUrl.toString()
+        val userUid = currentUser?.uid.toString()
         Log.d("TAG", "onCreate: $email this is current user")
 
         val user = hashMapOf(
@@ -50,7 +51,8 @@ class MainActivity : AppCompatActivity() {
             "imageUrl" to imageUrl,
             "live" to false,
             "lat" to 10.0,
-            "long" to 10.0
+            "long" to 10.0,
+            "userUid" to userUid
         )
 
         db.collection("users").get().addOnSuccessListener { users ->

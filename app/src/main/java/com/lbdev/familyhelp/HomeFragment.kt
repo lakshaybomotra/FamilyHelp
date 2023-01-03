@@ -1,5 +1,6 @@
 package com.lbdev.familyhelp
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Geocoder
 import android.location.Location
@@ -14,6 +15,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -37,6 +40,7 @@ class HomeFragment : Fragment() {
     private lateinit var geocoder: Geocoder
     lateinit var swipeToRefreshLV: SwipeRefreshLayout
     private val listMembers: ArrayList<MemberModel> = ArrayList()
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +64,7 @@ class HomeFragment : Fragment() {
         emptyViewHome = requireView().findViewById(R.id.empty_view_home)
         loadingView = requireView().findViewById(R.id.loading_view)
         swipeToRefreshLV = requireView().findViewById(R.id.idSwipeToRefresh)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext)
         swipeToRefreshLV.setOnRefreshListener {
             swipeToRefreshLV.isRefreshing = false
             val transaction = activity?.supportFragmentManager?.beginTransaction()
@@ -90,6 +95,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun getMembers() {
         val recyclerView = requireView().findViewById<RecyclerView>(R.id.rv_members)
         val listMembersCheck: ArrayList<String> = ArrayList()
@@ -103,10 +109,18 @@ class HomeFragment : Fragment() {
 
         val fireData = firestore.collection("users")
 
-        fireData.document(email).get().addOnSuccessListener {
-            cuLat = it.data?.get("lat") as Double
-            cuLong = it.data?.get("long") as Double
-        }
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location : Location? ->
+                if (location!=null){
+                    cuLat = location.latitude
+                    cuLong = location.longitude
+                }
+            }
+
+//        fireData.document(email).get().addOnSuccessListener {
+//            cuLat = it.data?.get("lat") as Double
+//            cuLong = it.data?.get("long") as Double
+//        }
 
         fireData.document(email)
             .collection("members").get().addOnCompleteListener {

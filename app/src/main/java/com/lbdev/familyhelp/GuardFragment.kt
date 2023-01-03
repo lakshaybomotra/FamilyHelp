@@ -90,7 +90,8 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
         }
 
         pinkCard.setOnClickListener {
-
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            Toast.makeText(context, "$uid", Toast.LENGTH_SHORT).show()
         }
 
         greenCard.setOnClickListener {

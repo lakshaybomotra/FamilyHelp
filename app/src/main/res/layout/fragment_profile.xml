@@ -25,7 +25,7 @@
             android:gravity="center"
             android:text="@string/user"
             android:textColor="@color/black"
-            android:textSize="@dimen/dimen_24_sp"
+            android:textSize="@dimen/dimen_24_dp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -86,7 +86,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="18dp"
             android:textStyle="bold"
-            android:textSize="@dimen/dimen_24_sp"
+            android:textSize="@dimen/dimen_24_dp"
             android:text="" />
 
 
@@ -136,7 +136,7 @@
                             android:layout_height="match_parent"
                             android:text="Delete Account"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/dimen_16_sp"
+                            android:textSize="@dimen/dimen_16_dp"
                             android:textStyle="bold"
                             android:gravity="center"
                             android:paddingLeft="16dp"/>
@@ -178,7 +178,7 @@
                             android:layout_height="match_parent"
                             android:text="Contact US"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/dimen_16_sp"
+                            android:textSize="@dimen/dimen_16_dp"
                             android:textStyle="bold"
                             android:gravity="center"
                             android:paddingLeft="16dp"/>
@@ -220,7 +220,7 @@
                             android:layout_height="match_parent"
                             android:text="Privacy Policy"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/dimen_16_sp"
+                            android:textSize="@dimen/dimen_16_dp"
                             android:textStyle="bold"
                             android:gravity="center"
                             android:paddingLeft="16dp"/>
@@ -262,7 +262,7 @@
                             android:layout_height="match_parent"
                             android:text="Terms And Conditions"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/dimen_16_sp"
+                            android:textSize="@dimen/dimen_16_dp"
                             android:textStyle="bold"
                             android:gravity="center"
                             android:paddingLeft="16dp"/>
@@ -306,7 +306,7 @@
                             android:layout_height="match_parent"
                             android:text="Logout"
                             android:textColor="@color/red"
-                            android:textSize="@dimen/dimen_16_sp"
+                            android:textSize="@dimen/dimen_16_dp"
                             android:textStyle="bold"
                             android:gravity="center"
                             android:paddingLeft="16dp"/>

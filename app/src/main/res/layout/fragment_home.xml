@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--on below line we are creating a swipe to refresh layout-->
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?><!--on below line we are creating a swipe to refresh layout-->
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/idSwipeToRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -21,26 +19,26 @@
             android:gravity="center"
             android:text="@string/myfamily"
             android:textColor="@color/black"
-            android:textSize="@dimen/dimen_16_sp"
+            android:textSize="@dimen/dimen_16_dp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent" />
 
-<!--        <ImageView-->
-<!--            android:id="@+id/icon_location"-->
-<!--            android:layout_width="24dp"-->
-<!--            android:layout_height="24dp"-->
-<!--            android:src="@drawable/ic_location"-->
-<!--            android:layout_margin="@dimen/dimen_16"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
+        <!--        <ImageView-->
+        <!--            android:id="@+id/icon_location"-->
+        <!--            android:layout_width="24dp"-->
+        <!--            android:layout_height="24dp"-->
+        <!--            android:src="@drawable/ic_location"-->
+        <!--            android:layout_margin="@dimen/dimen_16"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent" />-->
 
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_members"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/text_head"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_head"
             tools:listitem="@layout/item_member" />
 
         <ProgressBar
@@ -49,27 +47,27 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:visibility="visible"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/empty_view_home"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:visibility="gone"
-            android:paddingTop="@dimen/dimen_16"
-            android:textColor="@color/black"
-            android:textAllCaps="true"
             android:layout_margin="@dimen/dimen_16"
-            android:textSize="@dimen/dimen_24_sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:gravity="center"
+            android:paddingTop="@dimen/dimen_16"
+            android:text="No Members added 😞"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/dimen_24_dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="No Members added 😞" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <!--    <androidx.coordinatorlayout.widget.CoordinatorLayout-->

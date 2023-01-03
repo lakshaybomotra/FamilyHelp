@@ -5,202 +5,206 @@
     android:id="@+id/guardsv"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/grey">
 
-    <TextView
-        android:id="@+id/text_head"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_16"
-        android:gravity="center"
-        android:text="@string/security"
-        android:textColor="@color/black"
-        android:textSize="@dimen/dimen_16_sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/pink_card"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@color/grey">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/pink_card"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:layout_margin="@dimen/dimen_16"
-        app:cardBackgroundColor="@color/pink_card"
-        app:cardCornerRadius="@dimen/dimen_16"
-        app:cardElevation="@dimen/dimen_16"
-        app:layout_constraintTop_toBottomOf="@id/text_head" />
-
-    <TextView
-        android:id="@+id/text_sos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_16"
-        android:elevation="@dimen/dimen_16"
-        android:text="@string/sos"
-        android:textColor="@color/white"
-        android:textSize="@dimen/dimen_24_sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/pink_card"
-        app:layout_constraintTop_toTopOf="@id/pink_card" />
-
-    <ImageView
-        android:id="@+id/img_sos"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
-        android:layout_margin="@dimen/dimen_16"
-        android:elevation="@dimen/dimen_16"
-        android:src="@drawable/ic_sos"
-        app:layout_constraintBottom_toBottomOf="@id/pink_card"
-        app:layout_constraintEnd_toEndOf="@id/pink_card"
-        app:layout_constraintTop_toTopOf="@id/pink_card" />
-
-    <TextView
-        android:id="@+id/text_sos_des"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_16"
-        android:elevation="@dimen/dimen_16"
-        android:text="@string/sos_des"
-        android:textColor="#E7E7E9"
-        app:layout_constraintEnd_toStartOf="@id/img_sos"
-        app:layout_constraintStart_toStartOf="@id/pink_card"
-        app:layout_constraintTop_toBottomOf="@id/text_sos" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/green_card"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:layout_margin="@dimen/dimen_16"
-        app:cardBackgroundColor="@color/green_card"
-        app:cardCornerRadius="@dimen/dimen_16"
-        app:cardElevation="@dimen/dimen_16"
-        app:layout_constraintTop_toBottomOf="@+id/pink_card" />
-
-    <TextView
-        android:id="@+id/text_location_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_16"
-        android:elevation="@dimen/dimen_16"
-        android:text="@string/location_off"
-        android:textColor="@color/white"
-        android:textSize="@dimen/dimen_24_sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/green_card"
-        app:layout_constraintTop_toTopOf="@id/green_card" />
-
-    <TextView
-        android:id="@+id/text_location_des"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_16"
-        android:elevation="@dimen/dimen_16"
-        android:text="@string/location_des_off"
-        android:textColor="#E7E7E9"
-        app:layout_constraintEnd_toStartOf="@id/img_location"
-        app:layout_constraintStart_toStartOf="@id/green_card"
-        app:layout_constraintTop_toBottomOf="@id/text_location_status" />
-
-    <ImageView
-        android:id="@+id/img_location"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_margin="@dimen/dimen_16"
-        android:paddingRight="@dimen/dimen_16"
-        android:elevation="@dimen/dimen_16"
-        android:src="@drawable/icon_location"
-        app:layout_constraintEnd_toEndOf="@id/green_card"
-        app:layout_constraintTop_toTopOf="@id/green_card" />
-
-    <ImageView
-        android:id="@+id/img_location_status"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:elevation="@dimen/dimen_16"
-        android:layout_marginEnd="@dimen/dimen_16"
-        android:src="@drawable/icon_loc_off"
-        app:layout_constraintEnd_toEndOf="@id/img_location"
-        app:layout_constraintStart_toStartOf="@id/img_location"
-        app:layout_constraintTop_toBottomOf="@id/img_location" />
-
-    <LinearLayout
-        android:id="@+id/llSendInvite"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_16"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/green_card">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/text_head"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Enter member email to send invite"
-            android:textColorHint="@color/black"
-            app:boxBackgroundColor="@color/grey">
+            android:layout_margin="@dimen/dimen_16"
+            android:gravity="center"
+            android:text="@string/security"
+            android:textColor="@color/black"
+            android:textSize="@dimen/dimen_16_dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/pink_card"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:id="@+id/inviteEmailId"
-                android:textColor="@color/black"
-                android:layout_height="wrap_content" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/pink_card"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_margin="@dimen/dimen_16"
+            app:cardBackgroundColor="@color/pink_card"
+            app:cardCornerRadius="@dimen/dimen_16"
+            app:cardElevation="@dimen/dimen_16"
+            app:layout_constraintTop_toBottomOf="@id/text_head" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <Button
-            android:id="@+id/btnSendInvite"
+        <TextView
+            android:id="@+id/text_sos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape_rounded_rect"
-            android:text="Invite" />
+            android:layout_margin="@dimen/dimen_16"
+            android:elevation="@dimen/dimen_16"
+            android:text="@string/sos"
+            android:textColor="@color/white"
+            android:textSize="@dimen/dimen_24_dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/pink_card"
+            app:layout_constraintTop_toTopOf="@id/pink_card" />
+
+        <ImageView
+            android:id="@+id/img_sos"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_margin="@dimen/dimen_16"
+            android:elevation="@dimen/dimen_16"
+            android:src="@drawable/ic_sos"
+            app:layout_constraintBottom_toBottomOf="@id/pink_card"
+            app:layout_constraintEnd_toEndOf="@id/pink_card"
+            app:layout_constraintTop_toTopOf="@id/pink_card" />
+
+        <TextView
+            android:id="@+id/text_sos_des"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/dimen_16"
+            android:text="@string/sos_des"
+            android:textColor="#E7E7E9"
+            android:textSize="@dimen/dimen_16"
+            app:layout_constraintEnd_toStartOf="@id/img_sos"
+            app:layout_constraintStart_toStartOf="@id/text_sos"
+            app:layout_constraintTop_toBottomOf="@id/text_sos" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/green_card"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_margin="@dimen/dimen_16"
+            app:cardBackgroundColor="@color/green_card"
+            app:cardCornerRadius="@dimen/dimen_16"
+            app:cardElevation="@dimen/dimen_16"
+            app:layout_constraintTop_toBottomOf="@+id/pink_card" />
+
+        <TextView
+            android:id="@+id/text_location_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_16"
+            android:elevation="@dimen/dimen_16"
+            android:text="@string/location_off"
+            android:textColor="@color/white"
+            android:textSize="@dimen/dimen_24_dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/green_card"
+            app:layout_constraintTop_toTopOf="@id/green_card" />
+
+        <TextView
+            android:id="@+id/text_location_des"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/dimen_16"
+            android:text="@string/location_des_off"
+            android:textColor="#E7E7E9"
+            android:textSize="@dimen/dimen_16"
+            app:layout_constraintBottom_toBottomOf="@+id/img_location_status"
+            app:layout_constraintEnd_toStartOf="@id/img_location"
+            app:layout_constraintStart_toStartOf="@id/text_location_status"
+            app:layout_constraintTop_toBottomOf="@id/text_location_status" />
+
+        <ImageView
+            android:id="@+id/img_location"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_margin="@dimen/dimen_16"
+            android:elevation="@dimen/dimen_16"
+            android:paddingRight="@dimen/dimen_16"
+            android:src="@drawable/icon_location"
+            app:layout_constraintEnd_toEndOf="@id/green_card"
+            app:layout_constraintTop_toTopOf="@id/green_card" />
+
+        <ImageView
+            android:id="@+id/img_location_status"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="@dimen/dimen_16"
+            android:elevation="@dimen/dimen_16"
+            android:src="@drawable/icon_loc_off"
+            app:layout_constraintEnd_toEndOf="@id/img_location"
+            app:layout_constraintStart_toStartOf="@id/img_location"
+            app:layout_constraintTop_toBottomOf="@id/img_location" />
+
+        <LinearLayout
+            android:id="@+id/llSendInvite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_16"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/green_card">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Enter member email to send invite"
+                android:textColorHint="@color/black"
+                app:boxBackgroundColor="@color/grey">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inviteEmailId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/dimen_16" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnSendInvite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_rounded_rect"
+                android:text="Invite"
+                android:textSize="@dimen/dimen_16" />
 
 
-    </LinearLayout>
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvYourInvite"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_16"
-        android:text="Your Invites:"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/llSendInvite" />
+        <TextView
+            android:id="@+id/tvYourInvite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_16"
+            android:text="Your Invites:"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/llSendInvite" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/invite_check_rv"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvYourInvite"
-        tools:listitem="@layout/invities_check" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/invite_check_rv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvYourInvite"
+            tools:listitem="@layout/invities_check" />
 
-    <TextView
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:visibility="gone"
-        android:paddingTop="@dimen/dimen_16"
-        android:textColor="@color/black"
-        android:textAllCaps="true"
-        android:layout_margin="@dimen/dimen_16"
-        android:textSize="@dimen/dimen_24_sp"
-        app:layout_constraintTop_toBottomOf="@id/tvYourInvite"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="No Invites Received 😞" />
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/dimen_16"
+            android:gravity="center"
+            android:paddingTop="@dimen/dimen_16"
+            android:text="No Invites Received 😞"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/dimen_24_dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvYourInvite" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>
