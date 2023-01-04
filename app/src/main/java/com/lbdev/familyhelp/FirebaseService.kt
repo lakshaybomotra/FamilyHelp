@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -23,6 +24,10 @@ class FirebaseService: FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
+        val msg = message.data["sender"]
+
+
+        Log.d("notification check", "onMessageReceived: $msg")
         val intent = Intent(this, MainActivity::class.java)
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationID = Random.nextInt()
@@ -34,8 +39,8 @@ class FirebaseService: FirebaseMessagingService() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, FLAG_IMMUTABLE)
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(message.data["title"])
-            .setContentText(message.data["message"])
+            .setContentTitle(message.notification?.title)
+            .setContentText("Reach to them ASAP...")
             .setSmallIcon(R.drawable.ic_dashboard)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)

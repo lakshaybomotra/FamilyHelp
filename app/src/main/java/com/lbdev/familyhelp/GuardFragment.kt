@@ -167,7 +167,8 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
                                     for (token in tokens) {
                                         SosPushNotification(
                                             SosNotificationData(title, message),
-                                            token
+                                            token,
+                                            SosPayloadData(currentUser,"you got it")
                                         ).also {
                                             sendNotification(it)
                                         }
