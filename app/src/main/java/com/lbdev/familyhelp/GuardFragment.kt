@@ -184,7 +184,7 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
 
                     if (sosMembers.isEmpty()){
                         pinkCard.setOnLongClickListener {
-                            Toast.makeText(mContext, "No members to send sos", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(mContext, "No members to send SOS", Toast.LENGTH_SHORT).show()
                             true
                         }
                     }
