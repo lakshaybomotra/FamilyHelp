@@ -8,10 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,35 +43,46 @@ class MainActivity : AppCompatActivity() {
         val email = currentUser?.email.toString()
         val phoneNum = currentUser?.phoneNumber.toString()
         val imageUrl = currentUser?.photoUrl.toString()
-        val userUid = currentUser?.uid.toString()
-        Log.d("TAG", "onCreate: $email this is current user")
 
-        val user = hashMapOf(
-            "name" to name,
-            "email" to email,
-            "phoneNumber" to phoneNum,
-            "imageUrl" to imageUrl,
-            "live" to false,
-            "lat" to 10.0,
-            "long" to 10.0,
-            "userUid" to userUid
-        )
+        var token: String = ""
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            Log.d("token test", "onCreate: $it")
+            token = it
+        }.addOnCompleteListener {
+            Log.d("on complete de andar", "onCreate: $token")
+            val user = hashMapOf(
+                "name" to name,
+                "email" to email,
+                "phoneNumber" to phoneNum,
+                "imageUrl" to imageUrl,
+                "live" to false,
+                "lat" to 10.0,
+                "long" to 10.0,
+                "userToken" to token
+            )
 
-        db.collection("users").get().addOnSuccessListener { users ->
-            var totalUsers = users.size()
-            var flag = 0
-            while (totalUsers > 0) {
-                if (users.documents[totalUsers - 1].data?.get("email").toString() == email) {
-                    flag = 1
-                    setUserData(email)
+            val userToken = mutableMapOf<String, Any>(
+                "userToken" to token
+            )
+
+            db.collection("users").get().addOnSuccessListener { users ->
+                var totalUsers = users.size()
+                var flag = 0
+                while (totalUsers > 0) {
+                    if (users.documents[totalUsers - 1].data?.get("email").toString() == email) {
+                        flag = 1
+
+                        db.collection("users").document(email).update(userToken).addOnSuccessListener {  }
+                        setUserData(email)
+                    }
+                    totalUsers -= 1
                 }
-                totalUsers -= 1
-            }
-            if (flag == 0) {
-                db.collection("users").document(email).set(user).addOnSuccessListener {
-                    bottomBar.selectedItemId = R.id.nav_home
+                if (flag == 0) {
+                    db.collection("users").document(email).set(user).addOnSuccessListener {
+                        bottomBar.selectedItemId = R.id.nav_home
+                    }
+                        .addOnFailureListener { }
                 }
-                    .addOnFailureListener { }
             }
         }
 
@@ -98,7 +111,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUserData(email: String) {
         db.collection("users").document(email).get().addOnSuccessListener {
-            var userModel = UserModel()
+            val userModel = UserModel()
             userModel.name = it.data?.get("name").toString()
             CoroutineScope(Dispatchers.IO).launch {
                 database.userDao().saveUserName(userModel)

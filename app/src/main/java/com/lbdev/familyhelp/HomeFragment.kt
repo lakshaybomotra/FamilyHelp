@@ -117,21 +117,15 @@ class HomeFragment : Fragment() {
                 }
             }
 
-//        fireData.document(email).get().addOnSuccessListener {
-//            cuLat = it.data?.get("lat") as Double
-//            cuLong = it.data?.get("long") as Double
-//        }
-
         fireData.document(email)
-            .collection("members").get().addOnCompleteListener {
-                if (it.isSuccessful) {
-                    for (item in it.result) {
+            .collection("members").get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    for (item in task.result) {
                         if (item.get("invite_status") == 1L) {
                             listMembersCheck.add(item.id)
                         }
                     }
 
-                    var i = 1
                     listMembersCheck.forEach {
                         val dis = FloatArray(1)
                         fireData.document(it).get().addOnSuccessListener { document ->
@@ -201,7 +195,6 @@ class HomeFragment : Fragment() {
                             .addOnFailureListener {
                                 Log.d("TAG", "get failed with ")
                             }
-                        i++
                     }
                     if (listMembersCheck.isEmpty()) {
                         emptyViewHome.visibility = View.VISIBLE

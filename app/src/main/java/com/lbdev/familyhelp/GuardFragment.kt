@@ -19,30 +19,37 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
+    private val firestore = Firebase.firestore
+    private val currentUser = FirebaseAuth.getInstance().currentUser?.email.toString()
+    private val sosMembers = ArrayList<String>()
+    private val tokens = ArrayList<String>()
+    var name: String = currentUser
 
-    fun View.hideKeyboard() {
-        val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    private fun View.hideKeyboard() {
+        val inputManager =
+            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(windowToken, 0)
     }
 
-    lateinit var mContext: Context
-    lateinit var mail: String
-    lateinit var email: EditText
-    lateinit var database: MyFamilyDatabase
-    lateinit var recycler: RecyclerView
-    lateinit var emptyView: TextView
+    private lateinit var mContext: Context
+    private lateinit var mail: String
+    private lateinit var email: EditText
+    private lateinit var pinkCard: CardView
+    private lateinit var database: MyFamilyDatabase
+    private lateinit var recycler: RecyclerView
+    private lateinit var emptyView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,11 +69,9 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
         recycler = requireView().findViewById(R.id.invite_check_rv)
         emptyView = requireView().findViewById(R.id.empty_view)
 
-        val firestore = Firebase.firestore
-
         val sendInviteButton = requireView().findViewById<Button>(R.id.btnSendInvite)
         val greenCard = requireView().findViewById<CardView>(R.id.green_card)
-        val pinkCard = requireView().findViewById<CardView>(R.id.pink_card)
+        pinkCard = requireView().findViewById(R.id.pink_card)
         val locStatus = requireView().findViewById<TextView>(R.id.text_location_status)
         val locDes = requireView().findViewById<TextView>(R.id.text_location_des)
         val locStatusImg = requireView().findViewById<ImageView>(R.id.img_location_status)
@@ -74,49 +79,49 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
 
         CoroutineScope(Dispatchers.IO).launch {
             database.userDao().getLiveStatus().forEach {
-                if (it.liveStatus){
+                name = it.name
+                Log.d("database name check", "onViewCreated: ${it.name}")
+                if (it.liveStatus) {
                     locStatus.text = "LOCATION ON"
-                    locDes.text = "Turn off when you want to stop sharing location with your members."
+                    locDes.text =
+                        "Turn off when you want to stop sharing location with your members."
                     locStatusImg.setImageResource(R.drawable.icon_loc_on)
                 }
             }
         }
 
         sendInviteButton.setOnClickListener {
-            mail= email.text.toString()
+            mail = email.text.toString()
             sendInvite(mail)
             it.hideKeyboard()
             email.isEnabled = false
         }
 
-        pinkCard.setOnClickListener {
-            val uid = FirebaseAuth.getInstance().currentUser?.uid
-            Toast.makeText(context, "$uid", Toast.LENGTH_SHORT).show()
-        }
+        getMemberTokens()
 
         greenCard.setOnClickListener {
-            if (locStatus.text.equals("LOCATION OFF")){
-                CoroutineScope(Dispatchers.IO).launch {
-                    insertUserData(true)
-                }
-                locStatus.text = "LOCATION ON"
-                locDes.text = "Turn off when you want to stop sharing location with your members."
-                locStatusImg.setImageResource(R.drawable.icon_loc_on)
-                if (ContextCompat.checkSelfPermission(requireContext(),
-                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            if (locStatus.text.equals("LOCATION OFF")) {
+                if (ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        insertUserData(true)
+                    }
+                    locStatus.text = "LOCATION ON"
+                    locDes.text =
+                        "Turn off when you want to stop sharing location with your members."
+                    locStatusImg.setImageResource(R.drawable.icon_loc_on)
                     val intent = Intent(mContext, LocationService::class.java).apply {
                         action = LocationService.ACTION_START
                     }
                     mContext.startForegroundService(intent)
                 } else {
 
-                    val intent = Intent(mContext, LocationService::class.java).apply {
-                        action = LocationService.ACTION_START
-                    }
-                    mContext.startForegroundService(intent)
+                    Toast.makeText(mContext, "Give location permission", Toast.LENGTH_SHORT).show()
                 }
-            }
-            else{
+            } else {
                 CoroutineScope(Dispatchers.IO).launch {
                     insertUserData(false)
                 }
@@ -134,8 +139,73 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
         }
     }
 
-    private suspend fun insertUserData(live: Boolean) {
-        var userModel = UserModel()
+    private fun getMemberTokens() {
+        firestore.collection("users").document(currentUser).collection("members").get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    for (item in task.result) {
+                        if (item.get("invite_status") == 1L) {
+                            sosMembers.add(item.id)
+                        }
+                    }
+
+                    var i = 1
+                    sosMembers.forEach { it1 ->
+                        firestore.collection("users").document(it1).get()
+                            .addOnSuccessListener { document ->
+                                if (document != null) {
+                                    if (document.data?.get("userToken") != null) {
+                                        tokens.add(document.data!!["userToken"].toString())
+                                    }
+                                } else {
+                                    Log.d("TAG", "No such document")
+                                }
+                            }.addOnCompleteListener {
+                                pinkCard.setOnLongClickListener {
+                                    val title = "$name is in emergency!!!"
+                                    val message = "Reach to them ASAP..."
+                                    for (token in tokens) {
+                                        SosPushNotification(
+                                            SosNotificationData(title, message),
+                                            token
+                                        ).also {
+                                            sendNotification(it)
+                                        }
+                                    }
+                                    Toast.makeText(mContext, "SOS Sent", Toast.LENGTH_SHORT).show()
+                                    true
+                                }
+                            }
+                            .addOnFailureListener {
+                                Log.d("TAG", "get failed with ")
+                            }
+                        i++
+                    }
+
+                    if (sosMembers.isEmpty()){
+                        pinkCard.setOnLongClickListener {
+                            Toast.makeText(mContext, "No members to send sos", Toast.LENGTH_SHORT).show()
+                            true
+                        }
+                    }
+                }
+            }
+    }
+
+    private fun sendNotification(notification: SosPushNotification) =
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = RetrofitInstance.api.postSosNotification(notification)
+                if (response.isSuccessful) {
+                    Log.d("sendNotification", "sendNotification: ${Gson().toJson(response)}")
+                }
+            } catch (e: Exception) {
+                Log.e("sendNotification", e.toString())
+            }
+        }
+
+    private fun insertUserData(live: Boolean) {
+        val userModel = UserModel()
         userModel.liveStatus = live
         userModel.live = "liveStatus"
         userModel.name = database.userDao().getLiveStatus()[0].name
@@ -143,10 +213,8 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
     }
 
     private fun getInvites() {
-        val firestore = Firebase.firestore
-
         firestore.collection("users")
-            .document(FirebaseAuth.getInstance().currentUser?.email.toString())
+            .document(currentUser)
             .collection("invites").get().addOnCompleteListener {
                 if (it.isSuccessful) {
                     val list: ArrayList<String> = ArrayList()
@@ -156,17 +224,16 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
                         }
                     }
 
-                    val adapter = InvitiesAdapter(list,this)
+                    val adapter = InvitiesAdapter(list, this)
                     recycler.layoutManager = LinearLayoutManager(mContext)
                     recycler.adapter = adapter
 
                     if (list.isEmpty()) {
-                        recycler.visibility = View.GONE;
-                        emptyView.visibility = View.VISIBLE;
-                    }
-                    else {
-                        recycler.visibility = View.VISIBLE;
-                        emptyView.visibility = View.GONE;
+                        recycler.visibility = View.GONE
+                        emptyView.visibility = View.VISIBLE
+                    } else {
+                        recycler.visibility = View.VISIBLE
+                        emptyView.visibility = View.GONE
                         Log.d("TAG", "getMembers: inside else")
                     }
                 }
@@ -175,15 +242,11 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
 
     private fun sendInvite(mail: String) {
 
-//        val mail = requireView().findViewById<EditText>(R.id.inviteEmailId).text.toString()
-
-        val firestore = Firebase.firestore
-
         val data = hashMapOf(
             "invite_status" to 0
         )
 
-        val senderMail = FirebaseAuth.getInstance().currentUser?.email.toString()
+        val senderMail = currentUser
 
         firestore.collection("users")
             .document(mail)
@@ -218,8 +281,6 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
 
     override fun onAcceptClick(email: String) {
 
-        val firestore = Firebase.firestore
-
         val data = hashMapOf(
             "invite_status" to 1
         )
@@ -243,8 +304,6 @@ class GuardFragment : Fragment(), InvitiesAdapter.OnActionClick {
     }
 
     override fun onRejectClick(email: String) {
-
-        val firestore = Firebase.firestore
 
         val data = hashMapOf(
             "invite_status" to -1

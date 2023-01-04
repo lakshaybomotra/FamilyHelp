@@ -13,8 +13,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
@@ -55,6 +57,7 @@ class ProfileFragment : Fragment() {
 //        val editProfile = requireView().findViewById<ImageView>(R.id.ivEditProfile)
         val userName = requireView().findViewById<TextView>(R.id.tvUserName)
         val logout = requireView().findViewById<LinearLayout>(R.id.llLogout)
+        val profileProgress = requireView().findViewById<ProgressBar>(R.id.profileProgressBar)
         val currentUser = FirebaseAuth.getInstance().currentUser
         val email = currentUser?.email.toString()
         var uImage: String = ""
@@ -76,6 +79,7 @@ class ProfileFragment : Fragment() {
 
                     handler.post {
                         userProfile.setImageBitmap(image)
+                        profileProgress.isVisible = false
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
